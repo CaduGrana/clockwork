@@ -36,6 +36,11 @@
     </form>
     <p id="success-msg" class="text-green-400 mt-4 hidden">Agendamento salvo com sucesso!</p>
   </section>
+
+  <section class="bg-gray-800 rounded-lg shadow-lg p-6 mt-6">
+    <h2 class="text-xl font-semibold mb-4">Contador de Visitas</h2>
+    <p id="visit-counter" class="text-lg font-mono"></p>
+  </section>
 </main>
 
 <script>
@@ -92,6 +97,16 @@
   });
 
   openDB();
+
+  // Contador de visitas
+  function updateVisitCounter() {
+    let visits = localStorage.getItem('visitCount');
+    visits = visits ? parseInt(visits) + 1 : 1;
+    localStorage.setItem('visitCount', visits);
+    document.getElementById('visit-counter').textContent = `Esta página foi visitada ${visits} vez${visits > 1 ? 'es' : ''}.`;
+  }
+
+  updateVisitCounter();
 </script>
 
 </body>
