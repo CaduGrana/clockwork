@@ -10,7 +10,7 @@
     body { font-family: 'Inter', sans-serif; }
   </style>
 </head>
-<body class="min-h-screen bg-gray-900 text-white">
+<body class="min-h-screen bg-gray-900 text-white flex flex-col">
 
 <header class="bg-gray-950 border-b border-gray-800 py-6 text-center">
   <h1 class="text-3xl font-bold tracking-[3px] font-mono">CLOCKWORK TATTOO</h1>
@@ -22,7 +22,7 @@
   <a href="gerenciar.html" class="flex-1 py-4 font-semibold uppercase tracking-wider text-white text-center">Gerenciar</a>
 </nav>
 
-<main class="max-w-3xl mx-auto p-6">
+<main class="max-w-3xl mx-auto p-6 flex-grow">
   <section class="bg-gray-800 rounded-lg shadow-lg p-6">
     <h2 class="text-xl font-semibold mb-6">Novo Agendamento</h2>
     <form id="appointment-form" class="space-y-4">
@@ -36,12 +36,15 @@
     </form>
     <p id="success-msg" class="text-green-400 mt-4 hidden">Agendamento salvo com sucesso!</p>
   </section>
-
-  <section class="bg-gray-800 rounded-lg shadow-lg p-6 mt-6">
-    <h2 class="text-xl font-semibold mb-4">Contador de Visitas</h2>
-    <p id="visit-counter" class="text-lg font-mono"></p>
-  </section>
 </main>
+
+<footer class="py-4">
+  <div class="flex justify-center items-center text-gray-400 text-sm">
+    <span class="text-xl">🍊</span>
+    <span id="visit-counter" class="mx-2"></span>
+    <span class="text-xl">🍊</span>
+  </div>
+</footer>
 
 <script>
   const DB_NAME = 'ClockworkDB';
@@ -103,7 +106,7 @@
     let visits = localStorage.getItem('visitCount');
     visits = visits ? parseInt(visits) + 1 : 1;
     localStorage.setItem('visitCount', visits);
-    document.getElementById('visit-counter').textContent = `Esta página foi visitada ${visits} vez${visits > 1 ? 'es' : ''}.`;
+    document.getElementById('visit-counter').textContent = `${visits}`;
   }
 
   updateVisitCounter();
