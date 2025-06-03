@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clockwork Tattoo - Calendário</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+  <style> body { font-family: 'Inter', sans-serif; } </style>
+</head>
+<body class="min-h-screen bg-gray-900 text-white">
+
+<header class="bg-gray-950 border-b border-gray-800 py-6 text-center relative">
+  <h1 class="text-3xl font-bold tracking-[3px] font-mono">CLOCKWORK TATTOO</h1>
+</header>
+
+<nav class="bg-gray-800 flex">
+  <a href="agendamento.html" class="flex-1 py-4 font-semibold uppercase tracking-wider text-white text-center">Agendar Horário</a>
+  <a href="calendario.html" class="flex-1 py-4 font-semibold uppercase tracking-wider bg-orange-600 text-white text-center">Calendário</a>
+  <a href="gerenciar.html" class="flex-1 py-4 font-semibold uppercase tracking-wider text-white text-center">Gerenciar</a>
+</nav>
+
+<main class="max-w-3xl mx-auto p-6">
+  <section class="bg-gray-800 rounded-lg shadow-lg p-6">
+    <h2 class="text-xl font-semibold mb-6">Agendamentos</h2>
+    <div id="appointments-list" class="space-y-4"></div>
+  </section>
+</main>
+
+<script>
+  const DB_NAME = 'ClockworkDB';
+  const DB_VERSION = 1;
+  const STORE_NAME = 'appointments';
+
+  let db;
+
+  function openDB() {
+    return new Promise((resolve, reject) => {
+      const request = indexedDB.open(DB_NAME, DB_VERSION);
+      request.onerror = () => reject('Erro ao abrir banco de dados');
+      request.onsuccess = () => {
+        db = request.result;
+        resolve();
+      };
+      request.onupgradeneeded = (e) => {
+        db = e.target.result;
+        if (!db.objectStoreNames.contains(STORE_NAME)) {
+          db.createObjectStore(STORE_NAME, { keyPath: 'id', autoIncrement: true });
+        }
+      };
+    });
+  }
+
+  function getAllAppointments() {
+    return new Promise((resolve) => {
+      const tx = db.transaction(STORE_NAME, 'readonly');
+      const store = tx.objectStore(STORE_NAME);
+      const request = store.getAll();
+      request.onsuccess = () => resolve(request.result);
+    });
+  }
+
+  async function renderAppointments() {
+    const appointments = await getAllAppointments();
+    const list = document.getElementById('appointments-list');
+    list.innerHTML = appointments.length
+      ? appointments.map(app => `
+        <div class="p-4 rounded-lg bg-gray-700 text-white">
+          <div class="font-semibold">${app.name || 'Nome não informado'}</div>
+          <div>${app.email || 'Email não informado'}</div>
+          ${app.phone ? `<div>Telefone: ${app.phone}</div>` : ''}
+          <div>${app.service || 'Serviço não informado'} - ${app.date || 'Data não informada'} às ${app.time || 'Horário não informado'}</div>
+        </div>
+      `).join('')
+      : '<p class="text-center text-gray-400">Nenhum agendamento encontrado.</p>';
+  }
+
+  openDB().then(renderAppointments);
+</script>
+
+</body>
+</html>
